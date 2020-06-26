@@ -99,9 +99,10 @@ def filter_rentals(rentals: List[Rental]) -> List[Rental]:
 def process_rental(rental: Rental) -> float:
     # Ausleihgebür
     total_costs: float = 0.0
+    rental_end_date: date = min(rental.return_date, date.fromisoformat("2005-07-30"))
     # Rental duration in days. Closed interval (you need to pay for the first day and the last)
     # rental = 5, return = 7 ==> 3 days (7 - 5 + 1)
-    rental_duration = (rental.return_date - rental.rental_date).days + 1
+    rental_duration = (rental_end_date - rental.rental_date).days + 1
 
     # The days you are over the expected rental duration. First day over it counts:
     # film_rental_duration = 4, rental_duration = 5 ==> 1 (5 - 4)
@@ -121,7 +122,7 @@ def process_rental(rental: Rental) -> float:
     total_costs += replacement_cost
 
     print(
-        f"Rental {rental.rental_id} from {rental.rental_date} to {rental.return_date}"
+        f"Rental {rental.rental_id} from {rental.rental_date} to {rental_end_date}"
         f" spanning {rental_duration} out of {rental.film_rental_duration} days"
     )
     print(f"  It is {days_over} days over and punished for {punished_days_over}.")
