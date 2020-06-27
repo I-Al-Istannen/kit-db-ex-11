@@ -109,12 +109,20 @@ def process_rental(rental: Rental) -> float:
     days_over = max(0, rental_duration - rental.film_rental_duration)
 
     # You only need to pay up until 2 * film_rental_duration
-    # 9 days over, film_rental_duration = 4 ==> 8
-    punished_days_over = min(2 * rental.film_rental_duration, days_over)
+    # 9 days over, film_rental_duration = 4. 2 * film_rental_duration = 8
+    # So you need from the end of the normal duration (4) up to 2 * film_rental_duration (8)
+    # i.e. 4
+    # This is equivalent to
+    # last_punish_date = min(2 * rental.film_rental_duration, rental_duration)
+    # punished_days_over = max(0, last_punish_date - rental.film_rental_duration)
+    if rental_duration > 2 * rental.film_rental_duration:
+        punished_days_over = rental.film_rental_duration
+    else:
+        punished_days_over = days_over
 
     # If you are over 2 times the film_rental_duration, you need to pay the replacement cost
     replacement_cost: float = 0.0
-    if days_over > 2 * rental.film_rental_duration:
+    if rental_duration > 2 * rental.film_rental_duration:
         replacement_cost = rental.film_replacement_cost
 
     total_costs += rental.film_rental_rate
