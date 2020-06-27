@@ -139,7 +139,9 @@ if __name__ == "__main__":
     total_rental_cost: float = 0.0
     total_payment_given: float = 0.0
 
-    for r in filter_rentals(read_rentals(Path("Rental.tsv"), Path("Film_Infos.tsv"))):
+    all_rentals = filter_rentals(read_rentals(Path("Rental.tsv"), Path("Film_Infos.tsv")))
+    all_rentals.sort(key=lambda x: -x.rental_id)
+    for r in all_rentals:
         total_rental_cost += process_rental(r)
 
     print("")
